@@ -1,0 +1,1 @@
+Building a new version of the original iBudget app with a different approach to the same goal, but also with a focus on more features.
