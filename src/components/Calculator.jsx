@@ -19,17 +19,20 @@ class Calculator extends Component {
         }
         
         // Expense-related
-        this.submitExpense = this.submitExpense.bind(this);
         this.addExpenseForm = this.addExpenseForm.bind(this);
         this.addExpenseState = this.addExpenseState.bind(this);
 
         // Income-related
-        this.submitIncome = this.submitIncome.bind(this);
+        this.addIncomeForm = this.addIncomeForm.bind(this);
+        this.addIncomeState = this.addIncomeState.bind(this);
 
     }
 
     // Expense-related
 
+    // function by itself - returns new instances of state
+    // but since the form function maps the state, the former function
+    // automatically links up and adds a new form and state
     addExpenseState() {
         this.setState(prevState => ({
             expense : [...prevState.expense, 
@@ -86,28 +89,62 @@ class Calculator extends Component {
         this.setState({ expense });
     };
 
-    submitExpense(e) {
-        e.preventDefault();
-        this.setState({
-            
-        });
-    };
-
     // Income-related
 
-    addIncState() {
+    addIncomeState() {
         this.setState(prevState => ({
-            expense : [...prevState.expense, 
-                { name : '', value : 0 }
+            income : [...prevState.income, 
+                { name : '', value : '' }
             ]
         }));
     };
 
-    submitIncome(e) {
-        e.preventDefault();
-        this.setState({
-            
-        });
+    deleteIncome(i) {
+        let income = [...this.state.income];
+        income.splice(i, 1);
+        this.setState({ income });
+    };
+
+    addIncomeForm() {
+        return this.state.income.map((e, i) => (
+            <div key={i}>
+                {/* Delete form button */}
+                <input
+                    name='delIncomeForm'
+                    type='button'
+                    value='X'
+                    onClick={this.deleteIncome.bind(this, i)}
+                />
+                <div>Entry #{i}</div>
+                <label/>Name of Income
+                    <input 
+                        // name must match associated state -- see notes
+                        name='name'
+                        type='text'
+                        placeholder='Name of Income'
+                        // must bind here, because of new instances of i,
+                        // cannot be recognized near the constructor due to scope
+                        onChange={this.incomeChanges.bind(this, i)}
+                        value={e.name}
+                        required
+                    />
+                    <label/>Income Amount
+                    <input 
+                        name='value'
+                        type='text'
+                        placeholder='Income Amount'
+                        onChange={this.incomeChanges.bind(this, i)}
+                        value={e.value}
+                        required
+                    />
+            </div>
+        ))
+    }
+
+    incomeChanges(i, e) {
+        let income = [...this.state.income];
+        income[i] = {...income[i], [e.target.name] : e.target.value};
+        this.setState({ income });
     };
 
     render() { 
@@ -125,30 +162,18 @@ class Calculator extends Component {
 
                     {this.addExpenseForm()}
 
-                    <input type='submit'/>
-
                 </form>
                 
-                <form onSubmit={this.submitIncome}>
-                    <label/>Name of Income
-                    <input 
-                        name='name'
-                        type='text'
-                        placeholder='Name of Income'
-                        onChange={this.handleChange}
-                        value={this.state.incomeName}
-                    />
-                    <label/>Income Amount
-                    <input 
-                        name='value'
-                        type='text'
-                        placeholder='Name of expense'
-                        onChange={this.handleChange}
-                        value={this.state.incomeValue}
-                    />
+                <form>
+
                     <input
-                    type='submit'
+                        type='button'
+                        onClick={this.addIncomeState}
+                        value='+'
                     />
+
+                    {this.addIncomeForm()}
+
                 </form>
 
             </div>
