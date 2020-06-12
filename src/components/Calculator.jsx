@@ -13,9 +13,11 @@ class Calculator extends Component {
             ],
             income : [
                 { name : '', value : '' }
-            ],  
-            expenseTotal: 0,
-            incomeTotal: 0
+            ],
+            expenseNameBank : [],
+            expenseValueBank : [],  
+            incomeNameBank : [],
+            incomeValueBank : []
         }
         
         // Expense-related
@@ -25,6 +27,11 @@ class Calculator extends Component {
         // Income-related
         this.addIncomeForm = this.addIncomeForm.bind(this);
         this.addIncomeState = this.addIncomeState.bind(this);
+
+        // Else
+        this.calculateResults = this.calculateResults.bind(this);
+        this.resetTab = this.resetTab.bind(this);
+        // this.purgeEverything = this.purgeEverything.bind(this);
 
     }
 
@@ -147,12 +154,38 @@ class Calculator extends Component {
         this.setState({ income });
     };
 
+    // Calculate/Reset/Purge Button
+
+    calculateResults(e) {
+        e.preventDefault();
+        this.setState({
+            
+        });
+    };
+
+    resetTab() {
+        this.setState({
+            expense : [
+                { name : '', value : ''}
+            ],
+            income : [
+                { name : '', value: ''}
+            ],
+            expenseTotal : '',
+            incomeTotal : ''
+        });
+    };
+
+    purgeEverything() {
+        // reset state and add in clear localStorage.
+    }
+
     render() { 
         return (  
             <div>
                 This is the calculator component
                
-                <form>  
+                <form onSubmit={this.calculateResults}>  
                 
                     <input 
                         type='button'
@@ -162,10 +195,6 @@ class Calculator extends Component {
 
                     {this.addExpenseForm()}
 
-                </form>
-                
-                <form>
-
                     <input
                         type='button'
                         onClick={this.addIncomeState}
@@ -174,6 +203,8 @@ class Calculator extends Component {
 
                     {this.addIncomeForm()}
 
+                    <input type='submit'/>
+                        
                 </form>
 
             </div>
