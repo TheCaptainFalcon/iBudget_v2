@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import _ from 'lodash';
 
 class Calculator extends Component {
     constructor(props) {
@@ -16,8 +17,10 @@ class Calculator extends Component {
             ],
             expenseNameBank : [],
             expenseValueBank : [],  
+            expenseTotal : [],
             incomeNameBank : [],
-            incomeValueBank : []
+            incomeValueBank : [],
+            incomeTotal : []
         }
         
         // Expense-related
@@ -75,7 +78,7 @@ class Calculator extends Component {
                         // cannot be recognized near the constructor due to scope
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.name}
-                        required
+                        // required
                     />
                     <label/>Expense Amount
                     <input 
@@ -84,7 +87,7 @@ class Calculator extends Component {
                         placeholder='Cost of expense'
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.value}
-                        required
+                        // required
                     />
             </div>
         ))
@@ -133,7 +136,7 @@ class Calculator extends Component {
                         // cannot be recognized near the constructor due to scope
                         onChange={this.incomeChanges.bind(this, i)}
                         value={e.name}
-                        required
+                        // required
                     />
                     <label/>Income Amount
                     <input 
@@ -142,7 +145,7 @@ class Calculator extends Component {
                         placeholder='Income Amount'
                         onChange={this.incomeChanges.bind(this, i)}
                         value={e.value}
-                        required
+                        // required
                     />
             </div>
         ))
@@ -158,9 +161,38 @@ class Calculator extends Component {
 
     calculateResults(e) {
         e.preventDefault();
-        this.setState({
-            
+
+        const expenseNameAccumulator = this.state.expense.map(obj => {
+            return obj.name
         });
+
+        const expenseValueAccumulator = this.state.expense.map(obj => {
+            return _.toNumber(obj.value)
+        });
+
+        const incomeNameAccumulator = this.state.income.map(obj => {
+            return obj.name
+        });
+
+        const incomeValueAccumulator = this.state.income.map(obj => {
+            return _.toNumber(obj.value)
+        });
+
+        const expenseTotalAdder = _.reduce(this.state.expenseValueBank, function(a, b) {
+            return (a + b);
+        });
+        const incomeTotalAdder = _.reduce(this.state.incomeValueBank, function(a, b) {
+            return (a + b);
+        });
+
+        this.setState({
+            expenseNameBank : expenseNameAccumulator,
+            expenseValueBank : expenseValueAccumulator,
+            expenseTotal : expenseTotalAdder,
+            incomeNameBank : incomeNameAccumulator,
+            incomeValueBank : incomeValueAccumulator,
+            incomeTotal : incomeTotalAdder
+        });    
     };
 
     resetTab() {
@@ -171,8 +203,10 @@ class Calculator extends Component {
             income : [
                 { name : '', value: ''}
             ],
-            expenseTotal : '',
-            incomeTotal : ''
+            expenseNameBank : [],
+            expenseValueBank : [],  
+            incomeNameBank : [],
+            incomeValueBank : []
         });
     };
 
