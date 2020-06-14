@@ -15,12 +15,16 @@ class Calculator extends Component {
             income : [
                 { name : '', value : '' }
             ],
+            // exp
             expenseNameBank : [],
             expenseValueBank : [],  
             expenseTotal : [],
+            // inc
             incomeNameBank : [],
             incomeValueBank : [],
-            incomeTotal : []
+            incomeTotal : [],
+            // else
+            budgetTotal : []
         }
         
         // Expense-related
@@ -178,21 +182,34 @@ class Calculator extends Component {
             return _.toNumber(obj.value)
         });
 
-        const expenseTotalAdder = _.reduce(this.state.expenseValueBank, function(a, b) {
-            return (a + b);
-        });
-        const incomeTotalAdder = _.reduce(this.state.incomeValueBank, function(a, b) {
-            return (a + b);
-        });
+        // Swapped to vanilla reduce to use initialValue parameter for use in array of objects (+ parseFloat bc array of strings)
+        // otherwise the result would be NaN; attempting to add object to number property
+        // also had to switch state to reduce, because there is no initial value that's set until 
+        // after the function is run, which is asynchronous, so it would still be empty until the second
+        // rerun of the same function 
+
+       const expenseTotalAdder = (this.state.expense.reduce((a, b) => 
+        a + parseFloat(b.value), 0)
+       )
+       const incomeTotalAdder = (this.state.income.reduce((a, b) => 
+        a + parseFloat(b.value), 0)
+       )
+        
+        // const incomeTotalAdder = _.reduce(this.state.income, function(a, b) {
+        //     return (a + b.value);
+        // });
+
+        const budgetTotalCalc = incomeTotalAdder - expenseTotalAdder;
 
         this.setState({
             expenseNameBank : expenseNameAccumulator,
             expenseValueBank : expenseValueAccumulator,
-            expenseTotal : expenseTotalAdder,
             incomeNameBank : incomeNameAccumulator,
             incomeValueBank : incomeValueAccumulator,
-            incomeTotal : incomeTotalAdder
-        });    
+            expenseTotal : expenseTotalAdder,
+            incomeTotal : incomeTotalAdder,
+            budgetTotal : budgetTotalCalc
+        })
     };
 
     resetTab() {
@@ -203,10 +220,16 @@ class Calculator extends Component {
             income : [
                 { name : '', value: ''}
             ],
+            // exp
             expenseNameBank : [],
             expenseValueBank : [],  
+            expenseTotal : [],
+            // inc
             incomeNameBank : [],
-            incomeValueBank : []
+            incomeValueBank : [],
+            incomeTotal : [],
+            // else
+            budgetTotal : []
         });
     };
 
@@ -238,7 +261,12 @@ class Calculator extends Component {
                     {this.addIncomeForm()}
 
                     <input type='submit'/>
-                        
+                    <input 
+                        type='button' 
+                        value='Reset'
+                        onClick={this.resetTab} 
+                    />
+
                 </form>
 
             </div>
