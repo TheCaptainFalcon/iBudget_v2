@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
+import { ResultsProvider } from '../ResultsContext';
 
 class Calculator extends Component {
     constructor(props) {
@@ -239,6 +240,7 @@ class Calculator extends Component {
 
     render() { 
         return (  
+           <ResultsProvider value={this.state.expenseTotal}> 
             <div>
                 This is the calculator component
                
@@ -270,6 +272,7 @@ class Calculator extends Component {
                 </form>
 
             </div>
+            </ResultsProvider>
         );
     }
 }
