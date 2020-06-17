@@ -3,6 +3,7 @@ import './App.css';
 import Calculator from './components/Calculator';
 import Home from './components/Home';
 import Results from './components/Results';
+import Investments from './components/Investments';
 import { Route, Switch, NavLink, BrowserRouter as Router } from 'react-router-dom';
 
 function App() {
@@ -19,12 +20,16 @@ function App() {
           <li>
             <NavLink activeClassName='active-link' exact={true} to='/calc/results'>Results</NavLink>
           </li>
+          <li>
+            <NavLink activeClassName='active-link' exact={true} to='/calc/investments'>Investments</NavLink>
+          </li>
         </ul>
       </nav>
       <Switch>
         <Route exact path='/' component={Home} />
         <Route exact path='/calc' component={Calculator} />
         <Route exact path='/calc/results' component={Results} />
+        <Route exact path='/calc/investments' component={Investments} />
       </Switch>
     </Router>
   );

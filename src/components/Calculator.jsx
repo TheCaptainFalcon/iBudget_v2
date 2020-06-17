@@ -195,10 +195,6 @@ class Calculator extends Component {
        const incomeTotalAdder = (this.state.income.reduce((a, b) => 
         a + parseFloat(b.value), 0)
        )
-        
-        // const incomeTotalAdder = _.reduce(this.state.income, function(a, b) {
-        //     return (a + b.value);
-        // });
 
         const budgetTotalCalc = incomeTotalAdder - expenseTotalAdder;
 
@@ -233,10 +229,6 @@ class Calculator extends Component {
             budgetTotal : []
         });
     };
-
-    purgeEverything() {
-        // reset state and add in clear localStorage.
-    }
 
     render() { 
         return (  
