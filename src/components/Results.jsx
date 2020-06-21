@@ -8,17 +8,19 @@ class Results extends Component {
     }
     static contextType = ResultsContext;
 
-    componentDidMount() {
-        const expTotal = this.context;
-
-        console.log(expTotal)
-    }
-
     render() { 
+        const budgetTotal = this.context;
         return (  
             <div>
-                Results comp
-                {this.expTotal}
+                <div>
+                    Budget Amount: {budgetTotal}
+                </div>
+                <div>
+                    Expense Total:
+                </div>
+                <div>
+                    Income Total:
+                </div>
             </div>
         );
     }

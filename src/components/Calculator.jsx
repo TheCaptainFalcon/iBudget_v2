@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { ResultsProvider } from '../ResultsContext';
+import Results from './Results';
+import Investments from './Investments';
 
 class Calculator extends Component {
     constructor(props) {
@@ -25,7 +27,9 @@ class Calculator extends Component {
             incomeValueBank : [],
             incomeTotal : [],
             // else
-            budgetTotal : []
+            budgetTotal : [],
+            clickedInvestments: false,
+            clickedResults : false,
         }
         
         // Expense-related
@@ -40,6 +44,10 @@ class Calculator extends Component {
         this.calculateResults = this.calculateResults.bind(this);
         this.resetTab = this.resetTab.bind(this);
         // this.purgeEverything = this.purgeEverything.bind(this);
+
+        // Button routing
+        this.clickerInvestments = this.clickerInvestments.bind(this);
+        this.clickerResults = this.clickerResults.bind(this);
 
     }
 
@@ -230,11 +238,47 @@ class Calculator extends Component {
         });
     };
 
+    // Button routing
+    clickerInvestments(e) {
+        e.preventDefault();
+        this.setState({
+            clickedInvestments : true,
+            clickedResults : false
+        });
+    };
+
+    clickerResults(e) {
+        e.preventDefault();
+        this.setState({
+            clickedResults : true,
+            clickedInvestments : false
+        });
+    };
+
     render() { 
+        const expense = this.state.expense;
+        const income = this.state.income;
+        const expenseNameBank = this.state.expenseNameBank;
+        const expenseValueBank = this.state.expenseValueBank;
+        const expenseTotal = this.state.expenseTotal;
+        const incomeNameBank = this.state.incomeNameBank;
+        const incomeValueBank = this.state.incomeValueBank;
+        const incomeTotal = this.state.incomeTotal;
+        const budgetTotal = this.state.budgetTotal;
+
+        // // weirdly enough this doesn't work with button routing logic
+        // const clickedInvestments = this.state.clickedInvestments;
+        // const clickedResults = this.state.clickedInvestments;
+
+        
+        if (this.state.clickedInvestments === false && this.state.clickedResults === false) {
+
         return (  
-           <ResultsProvider value={this.state.expenseTotal}> 
             <div>
                 This is the calculator component
+                <button type='submit' onClick={this.clickerInvestments}>Investments Route</button>
+                <button type='submit' onClick={this.clickerResults}>Results Route</button>
+
                
                 <form onSubmit={this.calculateResults}>  
                 
@@ -264,8 +308,27 @@ class Calculator extends Component {
                 </form>
 
             </div>
-            </ResultsProvider>
-        );
+        )
+
+        } else if (this.state.clickedInvestments === true && this.state.clickedResults === false) {
+            return (
+                <ResultsProvider value={
+                    budgetTotal
+                    
+                }>
+                    <Investments/>
+                </ResultsProvider>
+            )
+
+        } else if (this.state.clickedResults === true && this.state.clickedInvestments === false) {
+            return (
+                <ResultsProvider value={
+                    budgetTotal
+                }>
+                    <Results/>
+                </ResultsProvider>
+            )
+        }
     }
 }
  
