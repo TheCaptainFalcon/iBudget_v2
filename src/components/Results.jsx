@@ -1,27 +1,38 @@
 import React, { Component } from 'react';
-import ResultsContext from '../ResultsContext';
+import {ResultsConsumer, ExpenseConsumer, IncomeConsumer} from '../Contexts';
 
 class Results extends Component {
     constructor(props) {
         super(props);
         this.state = {  }
     }
-    static contextType = ResultsContext;
 
     render() { 
-        const budgetTotal = this.context;
-        return (  
-            <div>
+ 
+        return (
+            <>
+            <ResultsConsumer>
+                {budgetTotal =>   
                 <div>
                     Budget Amount: {budgetTotal}
                 </div>
+                }
+            </ResultsConsumer>
+            <ExpenseConsumer>
+                {expenseTotal =>
                 <div>
-                    Expense Total:
+                    Expense Amount: {expenseTotal}
                 </div>
+                }
+            </ExpenseConsumer>
+            <IncomeConsumer>
+                {incomeTotal =>
                 <div>
-                    Income Total:
+                    Income Amount: {incomeTotal}    
                 </div>
-            </div>
+                }
+            </IncomeConsumer>
+            </>
         );
     }
 }

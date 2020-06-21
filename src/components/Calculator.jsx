@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { ResultsProvider } from '../ResultsContext';
+import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
 import Results from './Results';
 import Investments from './Investments';
 
@@ -322,10 +322,12 @@ class Calculator extends Component {
 
         } else if (this.state.clickedResults === true && this.state.clickedInvestments === false) {
             return (
-                <ResultsProvider value={
-                    budgetTotal
-                }>
+                <ResultsProvider value={budgetTotal}>
+                <ExpenseProvider value={expenseTotal}>
+                <IncomeProvider value={incomeTotal}>
                     <Results/>
+                </IncomeProvider>
+                </ExpenseProvider>
                 </ResultsProvider>
             )
         }
