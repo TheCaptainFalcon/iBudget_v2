@@ -4,7 +4,9 @@ import _ from 'lodash';
 import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
 import Results from './Results';
 import Investments from './Investments';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faDollarSign, faHistory, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
 import './css/Calculator.css'
 
 const FormButtonContainer = styled.div`
@@ -53,6 +55,9 @@ class Calculator extends Component {
             budgetTotal : [],
             clickedInvestments: false,
             clickedResults : false,
+            // modal
+            submitModal: false,
+            resetModal: false
         }
         
         // Expense-related
@@ -71,6 +76,12 @@ class Calculator extends Component {
         // Button routing
         this.clickerInvestments = this.clickerInvestments.bind(this);
         this.clickerResults = this.clickerResults.bind(this);
+
+        // Modal
+        this.showSubmitModal = this.showSubmitModal.bind(this);
+        this.showResetModal = this.showResetModal.bind(this);
+        this.hideSubmitModal = this.hideSubmitModal.bind(this);
+        this.hideResetModal = this.hideResetModal.bind(this);
 
     }
 
@@ -97,19 +108,9 @@ class Calculator extends Component {
         return this.state.expense.map((e, i) => (
             <div key={i}>
                 
-                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-evenly' }}>
-                    Entry # {i}
-                    {/* Delete form button */}
-                    <input
-                        name='delExpForm'
-                        type='button'
-                        value='X'
-                        onClick={this.deleteExpense.bind(this, i)}
-                        style={{ border:'none', color:'red', outline:'none', fontWeight:'500' }}
-                    />
-                </div>
-                <div style={{ display:'flex', justifyContent:'space-between' }}>
+                <div style={{ display:'flex', justifyContent:'space-between', marginTop:'2rem' }}>
                     {/* Name */}
+                    <FontAwesomeIcon icon={faUser} style={{ margin: '0.5rem 0.5rem auto auto' }}/>
                     <input 
                         // name must match associated state -- see notes
                         name='name'
@@ -122,6 +123,7 @@ class Calculator extends Component {
                         // required
                     />
                     {/* Amount */}
+                    <FontAwesomeIcon icon={faDollarSign} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
                     <input 
                         name='value'
                         type='text'
@@ -129,6 +131,23 @@ class Calculator extends Component {
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.value}
                         // required
+                    />
+                    {/* Frequency */}
+                    <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
+                    <select> 
+                        <option value='daily'>Daily</option>
+                        <option value='weekly'>Weekly</option>
+                        <option value='biweekly'>Bi-Weekly</option>
+                        <option value='monthly'>Monthly</option>
+                        <option value='annual'>Annual</option>
+                    </select>
+                    {/* Delete X */}
+                    <input
+                        name='delExpForm'
+                        type='button'
+                        value='X'
+                        onClick={this.deleteExpense.bind(this, i)}
+                        style={{ border:'none', color:'red', outline:'none', fontWeight:'500', marginLeft:'0.5rem' }}
                     />
                     </div>
             </div>
@@ -160,20 +179,13 @@ class Calculator extends Component {
     addIncomeForm() {
         return this.state.income.map((e, i) => (
             <div key={i}>
-                <div style={{ marginTop: '1rem', display: 'flex', justifyContent:'space-evenly'}}>
-                    Entry # {i}
-                    {/* Delete form button */}
-                    <input
-                        name='delIncomeForm'
-                        type='button'
-                        value='X'
-                        onClick={this.deleteIncome.bind(this, i)}
-                        style={{ border:'none', color:'red', outline:'none', fontWeight:'500' }}
-                    />
-                </div>
-                <div style={{ display:'flex', justifyContent:'space-between' }}>
-                {/* Name */}
+
+                <div style={{ display:'flex', justifyContent:'space-between', marginTop:'2rem' }}>
+
+                    {/* Name */}
+                    <FontAwesomeIcon icon={faUser} style={{ margin: '0.5rem 0.5rem auto auto' }}/>
                     <input 
+                    
                         // name must match associated state -- see notes
                         name='name'
                         type='text'
@@ -185,6 +197,7 @@ class Calculator extends Component {
                         // required
                     />
                     {/* Amount */}
+                    <FontAwesomeIcon icon={faDollarSign} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
                     <input 
                         name='value'
                         type='text'
@@ -193,7 +206,24 @@ class Calculator extends Component {
                         value={e.value}
                         // required
                     />
-                    </div>
+                    {/* Frequency */}
+                    <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
+                    <select> 
+                        <option value='daily'>Daily</option>
+                        <option value='weekly'>Weekly</option>
+                        <option value='biweekly'>Bi-Weekly</option>
+                        <option value='monthly'>Monthly</option>
+                        <option value='annual'>Annual</option>
+                    </select>
+                    {/* Delete form button */}
+                    <input
+                        name='delIncomeForm'
+                        type='button'
+                        value='X'
+                        onClick={this.deleteIncome.bind(this, i)}
+                        style={{ border:'none', color:'red', outline:'none', fontWeight:'500', marginLeft:'0.5rem' }}
+                    />
+                </div>
             </div>
         ))
     }
@@ -247,7 +277,8 @@ class Calculator extends Component {
             incomeValueBank : incomeValueAccumulator,
             expenseTotal : expenseTotalAdder,
             incomeTotal : incomeTotalAdder,
-            budgetTotal : budgetTotalCalc
+            budgetTotal : budgetTotalCalc,
+            submitModal : true
         })
     };
 
@@ -268,7 +299,9 @@ class Calculator extends Component {
             incomeValueBank : [],
             incomeTotal : [],
             // else
-            budgetTotal : []
+            budgetTotal : [],
+            // modal
+            resetModal : false
         });
     };
 
@@ -286,6 +319,35 @@ class Calculator extends Component {
         this.setState({
             clickedResults : true,
             clickedInvestments : false
+        });
+    };
+
+    // Modal
+    showSubmitModal(e) {
+        e.preventDefault();
+        this.setState({
+            submitModal : true
+        });
+    };
+
+    hideSubmitModal(e) {
+        e.preventDefault();
+        this.setState({
+            submitModal : false
+        });
+    };
+
+    showResetModal(e) {
+        e.preventDefault();
+        this.setState({
+            resetModal : true
+        });
+    };
+
+    hideResetModal(e) {
+        e.preventDefault();
+        this.setState({
+            resetModal : false
         });
     };
 
@@ -383,9 +445,45 @@ class Calculator extends Component {
                             type='button' 
                             value='Reset'
                             style={{ border:'1px solid black', borderRadius:'20px' }}
-                            onClick={this.resetTab} 
+                            onClick={this.showResetModal} 
                         />
                     </FormButtonContainer>
+
+                    {this.state.submitModal ?  
+                
+                    <Modal show={this.showSubmitModal} onHide={this.hideSubmitModal}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Data Submitted!</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Check the Results tab to see your financial breakdown.</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="primary" onClick={this.hideSubmitModal}>
+                                Close
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+
+                    : null } 
+
+                    {this.state.resetModal ?  
+                
+                    <Modal show={this.showResetModal} onHide={this.hideResetModal}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Warning!</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>Confirming will delete all existing data!</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="success" onClick={this.resetTab}>
+                                Confirm <FontAwesomeIcon icon={faCheck}/>
+                            </Button>
+                            <Button variant="danger" onClick={this.hideResetModal}>
+                                Go Back <FontAwesomeIcon icon={faBan}/>
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+
+                    : null } 
+
                 </form>
             </Wrapper>
             </div>
