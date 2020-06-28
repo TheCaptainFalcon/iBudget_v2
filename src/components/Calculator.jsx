@@ -4,6 +4,11 @@ import _ from 'lodash';
 import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
 import Results from './Results';
 import Investments from './Investments';
+import './css/Calculator.css'
+
+const FormButtonContainer = styled.form`
+    margin-top: 1rem;
+`;
 
 class Calculator extends Component {
     constructor(props) {
@@ -73,14 +78,18 @@ class Calculator extends Component {
     addExpenseForm() {
         return this.state.expense.map((e, i) => (
             <div key={i}>
-                {/* Delete form button */}
-                <input
-                    name='delExpForm'
-                    type='button'
-                    value='X'
-                    onClick={this.deleteExpense.bind(this, i)}
-                />
-                <div>Entry #{i}</div>
+                
+                <div>
+                    Entry #{i}
+                    {/* Delete form button */}
+                    <input
+                        name='delExpForm'
+                        type='button'
+                        value='X'
+                        onClick={this.deleteExpense.bind(this, i)}
+                        style={{ marginTop:'1rem' }}
+                    />
+                </div>
                 <label/>Name of Expense
                     <input 
                         // name must match associated state -- see notes
@@ -131,14 +140,17 @@ class Calculator extends Component {
     addIncomeForm() {
         return this.state.income.map((e, i) => (
             <div key={i}>
-                {/* Delete form button */}
-                <input
-                    name='delIncomeForm'
-                    type='button'
-                    value='X'
-                    onClick={this.deleteIncome.bind(this, i)}
-                />
-                <div>Entry #{i}</div>
+                <div>
+                    Entry #{i}
+                    {/* Delete form button */}
+                    <input
+                        name='delIncomeForm'
+                        type='button'
+                        value='X'
+                        onClick={this.deleteIncome.bind(this, i)}
+                        style={{ marginTop: '1rem' }}
+                    />
+                </div>
                 <label/>Name of Income
                     <input 
                         // name must match associated state -- see notes
@@ -275,13 +287,29 @@ class Calculator extends Component {
 
         return (  
             <div>
-                This is the calculator component
-                <button type='submit' onClick={this.clickerInvestments}>Investments Route</button>
-                <button type='submit' onClick={this.clickerResults}>Results Route</button>
+                <ul id='nav'>
+                    <li><button type='submit' onClick={this.clickerInvestments}>Investments Route</button></li>
+                    <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
+                </ul>
+                
+            
 
                
                 <form onSubmit={this.calculateResults}>  
                 
+                    <h1>Budget Calculations</h1>
+
+                    <input
+                    id='strictFormula'
+                    type='checkbox'
+                    
+                    
+                    />
+                    <label for='strictFormula'>Strict Method</label>
+
+
+                    <h2>Expense</h2>
+
                     <input 
                         type='button'
                         onClick={this.addExpenseState}
@@ -289,6 +317,8 @@ class Calculator extends Component {
                     />
 
                     {this.addExpenseForm()}
+
+                    <h2>Income</h2>
 
                     <input
                         type='button'
@@ -298,13 +328,17 @@ class Calculator extends Component {
 
                     {this.addIncomeForm()}
 
-                    <input type='submit'/>
-                    <input 
-                        type='button' 
-                        value='Reset'
-                        onClick={this.resetTab} 
-                    />
-
+                    <FormButtonContainer>
+                        <input 
+                            type='submit'
+                            style={{ marginLeft: '1rem', marginRight: '1rem' }}
+                        />
+                        <input 
+                            type='button' 
+                            value='Reset'
+                            onClick={this.resetTab} 
+                        />
+                    </FormButtonContainer>
                 </form>
 
             </div>

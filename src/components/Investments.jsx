@@ -3,16 +3,24 @@ import React, { Component } from 'react';
 class Investments extends Component {
     constructor(props) {
         super(props);
-        this.state = {  
+        this.state = {
+            initialAmount1 : '',  
             investAmount1 : '',
             avgAnnReturn1 : '',
+            addContributions : '',
+            contribFreq : '',
+            compoundFreq : '',
             years1 : '',
             eval1 : '',
             
+            initialAmount2 : '',
             investAmount2 : '',
             avgAnnReturn2 : '',
             years2 : '',
             eval2 : ''
+
+            // May add a tab to contain more states for a target amount calc
+            // use this two initial ones as a comparison between investing vs loan (in big purchase)
         }
         this.handleChanges = this.handleChanges.bind(this);
         this.submitInvestAmount1 = this.submitInvestAmount1.bind(this);
@@ -58,6 +66,14 @@ class Investments extends Component {
         return (  
             <div>
                 <form onSubmit={this.submitInvestAmount1}>
+                    <label/> Initial Amount 1
+                    <input
+                        name='initialAmount1'
+                        type='number'
+                        placeholder='Ex: $1000'
+                        onChange={this.handleChanges}
+                        value={this.state.initialAmount1}
+                    />
                     <label/>Investment Amount 1
                     <input
                         name='investAmount1'
