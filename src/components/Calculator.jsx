@@ -4,33 +4,29 @@ import _ from 'lodash';
 import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
 import Results from './Results';
 import Investments from './Investments';
-import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import './css/Calculator.css'
 
 const FormButtonContainer = styled.div`
-    margin-top: 1rem;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 3rem;
 `;
 
-function renderTooltip(props) {
-    return (
-        <Tooltip id="button-tooltip" {...props}>
-        Applying this will take into consideration leap and non-leap years and average the values per frequency basis.
-        </Tooltip>
-    );
-    }
-    
-const StrictHover = () => (
-    <OverlayTrigger
-        placement="top-start"
-        delay={{ show: 100, hide: 100 }}
-        overlay={renderTooltip}
-    >
-        <sup
-        style={{ color: 'blue', fontSize: 'x-small', marginLeft:'0.25rem'}}   
-        >What is this?
-        </sup>
-    </OverlayTrigger>
-    );
+const Wrapper = styled.div`
+    display: flex;
+    justify-content: center;
+`;
+
+const CalcTitle = styled.h1`
+    display: flex;
+    justify-content: center;
+    border: 1px solid black;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    box-shadow: 1px 1px 1px gray;
+`;
 
 class Calculator extends Component {
     constructor(props) {
@@ -101,38 +97,40 @@ class Calculator extends Component {
         return this.state.expense.map((e, i) => (
             <div key={i}>
                 
-                <div>
-                    Entry #{i}
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-evenly' }}>
+                    Entry # {i}
                     {/* Delete form button */}
                     <input
                         name='delExpForm'
                         type='button'
                         value='X'
                         onClick={this.deleteExpense.bind(this, i)}
-                        style={{ marginTop:'1rem' }}
+                        style={{ border:'none', color:'red', outline:'none', fontWeight:'500' }}
                     />
                 </div>
-                <label/>Name of Expense
+                <div style={{ display:'flex', justifyContent:'space-between' }}>
+                    {/* Name */}
                     <input 
                         // name must match associated state -- see notes
                         name='name'
                         type='text'
-                        placeholder='Name of expense'
+                        placeholder='Name'
                         // must bind here, because of new instances of i,
                         // cannot be recognized near the constructor due to scope
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.name}
                         // required
                     />
-                    <label/>Expense Amount
+                    {/* Amount */}
                     <input 
                         name='value'
                         type='text'
-                        placeholder='Cost of expense'
+                        placeholder='Amount'
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.value}
                         // required
                     />
+                    </div>
             </div>
         ))
     }
@@ -162,38 +160,40 @@ class Calculator extends Component {
     addIncomeForm() {
         return this.state.income.map((e, i) => (
             <div key={i}>
-                <div>
-                    Entry #{i}
+                <div style={{ marginTop: '1rem', display: 'flex', justifyContent:'space-evenly'}}>
+                    Entry # {i}
                     {/* Delete form button */}
                     <input
                         name='delIncomeForm'
                         type='button'
                         value='X'
                         onClick={this.deleteIncome.bind(this, i)}
-                        style={{ marginTop: '1rem' }}
+                        style={{ border:'none', color:'red', outline:'none', fontWeight:'500' }}
                     />
                 </div>
-                <label/>Name of Income
+                <div style={{ display:'flex', justifyContent:'space-between' }}>
+                {/* Name */}
                     <input 
                         // name must match associated state -- see notes
                         name='name'
                         type='text'
-                        placeholder='Name of Income'
+                        placeholder='Name'
                         // must bind here, because of new instances of i,
                         // cannot be recognized near the constructor due to scope
                         onChange={this.incomeChanges.bind(this, i)}
                         value={e.name}
                         // required
                     />
-                    <label/>Income Amount
+                    {/* Amount */}
                     <input 
                         name='value'
                         type='text'
-                        placeholder='Income Amount'
+                        placeholder='Amount'
                         onChange={this.incomeChanges.bind(this, i)}
                         value={e.value}
                         // required
                     />
+                    </div>
             </div>
         ))
     }
@@ -290,6 +290,28 @@ class Calculator extends Component {
     };
 
     render() { 
+
+        function renderTooltip(props) {
+            return (
+                <Tooltip id="button-tooltip" {...props}>
+                Applying this will take into consideration leap and non-leap years and average the values per frequency basis.
+                </Tooltip>
+            );
+            }
+            
+        const StrictHover = () => (
+            <OverlayTrigger
+                placement="right"
+                delay={{ show: 100, hide: 100 }}
+                overlay={renderTooltip}
+            >
+                <sup
+                style={{ color: 'blue', fontSize: 'x-small', marginLeft:'0.25rem'}}   
+                >What is this?
+                </sup>
+            </OverlayTrigger>
+            );
+            
         const expense = this.state.expense;
         const income = this.state.income;
         const expenseNameBank = this.state.expenseNameBank;
@@ -314,53 +336,60 @@ class Calculator extends Component {
                     <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
                 </ul>
 
-               
+               <Wrapper>
                 <form onSubmit={this.calculateResults}>  
                 
-                    <h1>Budget Calculations</h1>
+                    <CalcTitle>Budget Calculations</CalcTitle>
 
                     <input
                     id='strictFormula'
                     type='checkbox'
+                    style={{ marginRight:'0.35rem' }}
                     />
                     <label htmlFor='strictFormula'>Strict Method</label>
                     <StrictHover/>
 
 
-                    <h2>Expense</h2>
-
-                    <input 
-                        type='button'
-                        onClick={this.addExpenseState}
-                        value='+'
-                    />
+                    <h2 style={{ display: 'flex', justifyContent:'center'}}> 
+                        Expense 
+                        <input 
+                            type='button'
+                            onClick={this.addExpenseState}
+                            value='+'
+                            style={{ marginLeft:'1rem', color: 'green', border:'none', outline:'none' }}
+                        />
+                    </h2>
 
                     {this.addExpenseForm()}
 
-                    <h2>Income</h2>
-
-                    <input
-                        type='button'
-                        onClick={this.addIncomeState}
-                        value='+'
-                    />
+                    <h2 style={{ display: 'flex', justifyContent:'center', marginTop:'1.5rem'}}>
+                        Income
+                        <input
+                            type='button'
+                            onClick={this.addIncomeState}
+                            value='+'
+                            style={{ marginLeft:'1rem', color: 'green', border:'none', outline:'none' }}
+                        />
+                    </h2>
 
                     {this.addIncomeForm()}
 
                     <FormButtonContainer>
                         <input 
                             type='submit'
-                            style={{ marginLeft: '1rem', marginRight: '1rem' }}
+                            style={{ border:'1px solid black', borderRadius:'20px', marginLeft: '1rem', marginRight: '1rem' }}
                         />
                         <input 
                             type='button' 
                             value='Reset'
+                            style={{ border:'1px solid black', borderRadius:'20px' }}
                             onClick={this.resetTab} 
                         />
                     </FormButtonContainer>
                 </form>
-
+            </Wrapper>
             </div>
+            
         )
 
         } else if (this.state.clickedInvestments === true && this.state.clickedResults === false) {
