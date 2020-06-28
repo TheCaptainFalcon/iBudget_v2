@@ -4,11 +4,33 @@ import _ from 'lodash';
 import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
 import Results from './Results';
 import Investments from './Investments';
+import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
 import './css/Calculator.css'
 
-const FormButtonContainer = styled.form`
+const FormButtonContainer = styled.div`
     margin-top: 1rem;
 `;
+
+function renderTooltip(props) {
+    return (
+        <Tooltip id="button-tooltip" {...props}>
+        Applying this will take into consideration leap and non-leap years and average the values per frequency basis.
+        </Tooltip>
+    );
+    }
+    
+const StrictHover = () => (
+    <OverlayTrigger
+        placement="top-start"
+        delay={{ show: 100, hide: 100 }}
+        overlay={renderTooltip}
+    >
+        <sup
+        style={{ color: 'blue', fontSize: 'x-small', marginLeft:'0.25rem'}}   
+        >What is this?
+        </sup>
+    </OverlayTrigger>
+    );
 
 class Calculator extends Component {
     constructor(props) {
@@ -291,8 +313,6 @@ class Calculator extends Component {
                     <li><button type='submit' onClick={this.clickerInvestments}>Investments Route</button></li>
                     <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
                 </ul>
-                
-            
 
                
                 <form onSubmit={this.calculateResults}>  
@@ -302,10 +322,9 @@ class Calculator extends Component {
                     <input
                     id='strictFormula'
                     type='checkbox'
-                    
-                    
                     />
-                    <label for='strictFormula'>Strict Method</label>
+                    <label htmlFor='strictFormula'>Strict Method</label>
+                    <StrictHover/>
 
 
                     <h2>Expense</h2>
