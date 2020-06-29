@@ -4,9 +4,10 @@ import _ from 'lodash';
 import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
 import Results from './Results';
 import Investments from './Investments';
-import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Modal, Button, Navbar } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faDollarSign, faHistory, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import './css/Calculator.css'
 
 const FormButtonContainer = styled.div`
@@ -389,14 +390,32 @@ class Calculator extends Component {
         // const clickedResults = this.state.clickedInvestments;
 
         
-        if (this.state.clickedInvestments === false && this.state.clickedResults === false) {
+        // if (this.state.clickedInvestments === false && this.state.clickedResults === false) {
 
         return (  
             <div>
-                <ul id='nav'>
+                <Router>
+                    <Navbar className='App-nav' bg='dark' variant='dark' style={{ display:'flex', justifyContent:'center'}}>
+                        <NavLink className='App-nav-link' activeClassName='active-link' exact={true} to='/'>Calculator</NavLink>
+                        <NavLink className='App-nav-link' activeClassName='active-link' exact={true} to='/calc/results'>Results</NavLink>
+                        <NavLink className='App-nav-link' activeClassName='active-link' exact={true} to='/calc/investments'>Investments</NavLink>
+                    </Navbar>
+                    <Route exact path = '/' component={Calculator} ></Route>
+                    <Route exact path = '/calc/results'>
+                        <ResultsProvider value={budgetTotal}>
+                        <ExpenseProvider value={expenseTotal}>
+                        <IncomeProvider value={incomeTotal}>
+                            <Results/>
+                        </IncomeProvider>
+                        </ExpenseProvider>
+                        </ResultsProvider>
+                    </Route>
+                    <Route exact path = '/calc/investments' component={Investments} ></Route>
+                </Router>
+                {/* <ul id='nav'>
                     <li><button type='submit' onClick={this.clickerInvestments}>Investments Route</button></li>
                     <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
-                </ul>
+                </ul> */}
 
                <Wrapper>
                 <form onSubmit={this.calculateResults}>  
@@ -490,27 +509,27 @@ class Calculator extends Component {
             
         )
 
-        } else if (this.state.clickedInvestments === true && this.state.clickedResults === false) {
-            return (
-                <ResultsProvider value={
-                    budgetTotal
+        // } else if (this.state.clickedInvestments === true && this.state.clickedResults === false) {
+        //     return (
+        //         <ResultsProvider value={
+        //             budgetTotal
                     
-                }>
-                    <Investments/>
-                </ResultsProvider>
-            )
+        //         }>
+        //             <Investments/>
+        //         </ResultsProvider>
+        //     )
 
-        } else if (this.state.clickedResults === true && this.state.clickedInvestments === false) {
-            return (
-                <ResultsProvider value={budgetTotal}>
-                <ExpenseProvider value={expenseTotal}>
-                <IncomeProvider value={incomeTotal}>
-                    <Results/>
-                </IncomeProvider>
-                </ExpenseProvider>
-                </ResultsProvider>
-            )
-        }
+        // } else if (this.state.clickedResults === true && this.state.clickedInvestments === false) {
+        //     return (
+        //         <ResultsProvider value={budgetTotal}>
+        //         <ExpenseProvider value={expenseTotal}>
+        //         <IncomeProvider value={incomeTotal}>
+        //             <Results/>
+        //         </IncomeProvider>
+        //         </ExpenseProvider>
+        //         </ResultsProvider>
+        //     )
+        // }
     }
 }
  
