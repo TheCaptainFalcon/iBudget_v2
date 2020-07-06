@@ -13,20 +13,7 @@ class Home extends Component {
     render() { 
         return (  
             <div>
-                This is the home comp
-                <Router>
-                <Navbar className='App-nav' bg='dark' variant='dark' style={{ display:'flex', justifyContent:'center'}}>
-                    <NavLink className='App-nav-link' activeClassName='active-link' exact={true} to='/'>Calculator</NavLink>
-                    <NavLink className='App-nav-link' activeClassName='active-link' exact={true} to='/calc/results'>Results</NavLink>
-                    <NavLink className='App-nav-link' activeClassName='active-link' exact={true} to='/calc/investments'>Investments</NavLink>
-                </Navbar>
-                <Switch>
-                    <Route exact path = '/' component={Calculator} ></Route>
-           
-                    <Route exact path = '/calc/results'component={Results}></Route>
-                    <Route exact path = '/calc/investments' component={Investments} ></Route>
-                </Switch>
-            </Router>
+                well
             </div>
         );
     }

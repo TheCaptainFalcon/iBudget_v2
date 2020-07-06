@@ -395,7 +395,21 @@ class Calculator extends Component {
 
         return (  
             <div>
-                
+                <Router>
+      <Navbar className='App-nav' bg="dark" variant="dark">
+          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/'>Home</NavLink>
+          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/calc'>Calculator</NavLink>
+          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/calc/results'>Results</NavLink>
+          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/calc/investments'>Investments</NavLink>
+      </Navbar>
+     
+        <Route exact path = '/' component={ Home } />
+        <ResultsProvider value={budgetTotal}>
+        <Route exact path = '/calc/results' component={ Results } />
+        </ResultsProvider>
+        <Route exact path = '/calc/investments' component={ Investments } />
+     
+    </Router>
                 <ul id='nav'>
                     <li><button type='submit' onClick={this.clickerInvestments}>Investments Route</button></li>
                     <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
