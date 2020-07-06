@@ -5,6 +5,8 @@ import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faDollarSign, faHistory, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
 import './css/Calculator.css'
+import { connect } from 'react-redux';
+import { fetchBudget } from '../actions';
 
 const FormButtonContainer = styled.div`
     margin-top: 2rem;
@@ -261,6 +263,8 @@ class Calculator extends Component {
 
         const budgetTotalCalc = incomeTotalAdder - expenseTotalAdder;
 
+        
+
         this.setState({
             expenseNameBank : expenseNameAccumulator,
             expenseValueBank : expenseValueAccumulator,
@@ -463,4 +467,10 @@ class Calculator extends Component {
     }
 }
  
-export default Calculator;
+const mapStateToProps = (state) => {
+    return {
+        budget : state.budget
+    }
+}
+
+export default connect(mapStateToProps, { fetchBudget })(Calculator);
