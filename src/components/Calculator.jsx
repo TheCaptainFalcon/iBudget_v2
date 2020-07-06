@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
-import Results from './Results';
-import Investments from './Investments';
 import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faDollarSign, faHistory, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
@@ -53,8 +50,6 @@ class Calculator extends Component {
             incomeTotal : [],
             // else
             budgetTotal : [],
-            clickedInvestments: false,
-            clickedResults : false,
             // modal
             submitModal: false,
             resetModal: false
@@ -72,10 +67,6 @@ class Calculator extends Component {
         this.calculateResults = this.calculateResults.bind(this);
         this.resetTab = this.resetTab.bind(this);
         // this.purgeEverything = this.purgeEverything.bind(this);
-
-        // Button routing
-        this.clickerInvestments = this.clickerInvestments.bind(this);
-        this.clickerResults = this.clickerResults.bind(this);
 
         // Modal
         this.showSubmitModal = this.showSubmitModal.bind(this);
@@ -305,22 +296,6 @@ class Calculator extends Component {
         });
     };
 
-    // Button routing
-    clickerInvestments(e) {
-        e.preventDefault();
-        this.setState({
-            clickedInvestments : true,
-            clickedResults : false
-        });
-    };
-
-    clickerResults(e) {
-        e.preventDefault();
-        this.setState({
-            clickedResults : true,
-            clickedInvestments : false
-        });
-    };
 
     // Modal
     showSubmitModal(e) {
@@ -389,14 +364,9 @@ class Calculator extends Component {
         // const clickedResults = this.state.clickedInvestments;
 
         
-        if (this.state.clickedInvestments === false && this.state.clickedResults === false) {
 
         return (  
             <div>
-                <ul id='nav'>
-                    <li><button type='submit' onClick={this.clickerInvestments}>Investments Route</button></li>
-                    <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
-                </ul>
 
                <Wrapper>
                 <form onSubmit={this.calculateResults}>  
@@ -490,27 +460,6 @@ class Calculator extends Component {
             
         )
 
-        } else if (this.state.clickedInvestments === true && this.state.clickedResults === false) {
-            return (
-                <ResultsProvider value={
-                    budgetTotal
-                    
-                }>
-                    <Investments/>
-                </ResultsProvider>
-            )
-
-        } else if (this.state.clickedResults === true && this.state.clickedInvestments === false) {
-            return (
-                <ResultsProvider value={budgetTotal}>
-                <ExpenseProvider value={expenseTotal}>
-                <IncomeProvider value={incomeTotal}>
-                    <Results/>
-                </IncomeProvider>
-                </ExpenseProvider>
-                </ResultsProvider>
-            )
-        }
     }
 }
  
