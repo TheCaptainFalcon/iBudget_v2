@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
 import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
-import Home from './Home';
 import Results from './Results';
-import Investments from './Investments';
-import { Tooltip, OverlayTrigger, Modal, Button, Navbar } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faDollarSign, faHistory, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
-import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import './css/Calculator.css'
 
 const FormButtonContainer = styled.div`
@@ -55,8 +52,7 @@ class Calculator extends Component {
             incomeTotal : [],
             // else
             budgetTotal : [],
-            clickedInvestments: false,
-            clickedResults : false,
+            showResults: false,
             // modal
             submitModal: false,
             resetModal: false
@@ -75,9 +71,8 @@ class Calculator extends Component {
         this.resetTab = this.resetTab.bind(this);
         // this.purgeEverything = this.purgeEverything.bind(this);
 
-        // Button routing
-        this.clickerInvestments = this.clickerInvestments.bind(this);
-        this.clickerResults = this.clickerResults.bind(this);
+        // Conditional Context Results
+        this.showSubmitResults = this.showSubmitResults.bind(this);
 
         // Modal
         this.showSubmitModal = this.showSubmitModal.bind(this);
@@ -122,7 +117,7 @@ class Calculator extends Component {
                         // cannot be recognized near the constructor due to scope
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.name}
-                        // required
+                        required
                     />
                     {/* Amount */}
                     <FontAwesomeIcon icon={faDollarSign} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
@@ -132,7 +127,7 @@ class Calculator extends Component {
                         placeholder='Amount'
                         onChange={this.expenseChanges.bind(this, i)}
                         value={e.value}
-                        // required
+                        required
                     />
                     {/* Frequency */}
                     <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
@@ -196,7 +191,7 @@ class Calculator extends Component {
                         // cannot be recognized near the constructor due to scope
                         onChange={this.incomeChanges.bind(this, i)}
                         value={e.name}
-                        // required
+                        required
                     />
                     {/* Amount */}
                     <FontAwesomeIcon icon={faDollarSign} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
@@ -206,7 +201,7 @@ class Calculator extends Component {
                         placeholder='Amount'
                         onChange={this.incomeChanges.bind(this, i)}
                         value={e.value}
-                        // required
+                        required
                     />
                     {/* Frequency */}
                     <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
@@ -280,7 +275,8 @@ class Calculator extends Component {
             expenseTotal : expenseTotalAdder,
             incomeTotal : incomeTotalAdder,
             budgetTotal : budgetTotalCalc,
-            submitModal : true
+            submitModal : true,
+            showSubmitResults : true
         })
     };
 
@@ -302,25 +298,19 @@ class Calculator extends Component {
             incomeTotal : [],
             // else
             budgetTotal : [],
+            showSubmitResults: false,
             // modal
             resetModal : false
         });
     };
 
-    // Button routing
-    clickerInvestments(e) {
-        e.preventDefault();
-        this.setState({
-            clickedInvestments : true,
-            clickedResults : false
-        });
-    };
+    // Context Results
+    
 
-    clickerResults(e) {
+    showSubmitResults(e) {
         e.preventDefault();
         this.setState({
-            clickedResults : true,
-            clickedInvestments : false
+            showResults: true
         });
     };
 
@@ -390,30 +380,8 @@ class Calculator extends Component {
         // const clickedInvestments = this.state.clickedInvestments;
         // const clickedResults = this.state.clickedInvestments;
 
-        
-        if (this.state.clickedInvestments === false && this.state.clickedResults === false) {
-
         return (  
             <div>
-                <Router>
-      <Navbar className='App-nav' bg="dark" variant="dark">
-          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/'>Home</NavLink>
-          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/calc'>Calculator</NavLink>
-          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/calc/results'>Results</NavLink>
-          <NavLink className="App-nav-link" activeClassName='active-link' exact={true} to='/calc/investments'>Investments</NavLink>
-      </Navbar>
-     
-        <Route exact path = '/' component={ Home } />
-        <ResultsProvider value={budgetTotal}>
-        <Route exact path = '/calc/results' component={ Results } />
-        </ResultsProvider>
-        <Route exact path = '/calc/investments' component={ Investments } />
-     
-    </Router>
-                <ul id='nav'>
-                    <li><button type='submit' onClick={this.clickerInvestments}>Investments Route</button></li>
-                    <li><button type='submit' onClick={this.clickerResults}>Results Route</button></li>
-                </ul>
 
                <Wrapper>
                 <form onSubmit={this.calculateResults}>  
@@ -466,6 +434,20 @@ class Calculator extends Component {
                         />
                     </FormButtonContainer>
 
+                    {/* Results Component */}
+                    {this.state.showSubmitResults ?
+
+                          <ResultsProvider value={budgetTotal}>
+                            <ExpenseProvider value={expenseTotal}>
+                            <IncomeProvider value={incomeTotal}>
+                                <CalcTitle>Results Analysis</CalcTitle>
+                                <Results/>
+                            </IncomeProvider>
+                            </ExpenseProvider>
+                            </ResultsProvider>  
+                        
+                    : null }
+
                     {this.state.submitModal ?  
                 
                     <Modal show={this.showSubmitModal} onHide={this.hideSubmitModal}>
@@ -503,31 +485,8 @@ class Calculator extends Component {
 
                 </form>
             </Wrapper>
-            </div>
-            
+            </div> 
         )
-
-        } else if (this.state.clickedInvestments === true && this.state.clickedResults === false) {
-            return (
-                <ResultsProvider value={
-                    budgetTotal
-                    
-                }>
-                    <Investments/>
-                </ResultsProvider>
-            )
-
-        } else if (this.state.clickedResults === true && this.state.clickedInvestments === false) {
-            return (
-                <ResultsProvider value={budgetTotal}>
-                <ExpenseProvider value={expenseTotal}>
-                <IncomeProvider value={incomeTotal}>
-                    <Results/>
-                </IncomeProvider>
-                </ExpenseProvider>
-                </ResultsProvider>
-            )
-        }
     }
 }
  
