@@ -37,14 +37,15 @@ class Calculator extends Component {
                 // value is best left as string rather than 0,
                 // otherwise it adds onto the 0 + 'entry' and 
                 // UX is a pain, having to manually delete before entry
-                { name : '', value: '' }
+                { name : '', value: '', freq: '' }
             ],
             income : [
-                { name : '', value : '' }
+                { name : '', value : '', freq: '' }
             ],
             // exp
             expenseNameBank : [],
             expenseValueBank : [],  
+            convertedExpenseValueBank : [],
             expenseTotal : [],
             // inc
             incomeNameBank : [],
@@ -56,6 +57,7 @@ class Calculator extends Component {
             // modal
             submitModal: false,
             resetModal: false
+        
         }
         
         // Expense-related
@@ -90,7 +92,7 @@ class Calculator extends Component {
     addExpenseState() {
         this.setState(prevState => ({
             expense : [...prevState.expense, 
-                { name : '', value : '' }
+                { name : '', value : '', freq: '' }
             ]
         }));
     };
@@ -131,7 +133,8 @@ class Calculator extends Component {
                     />
                     {/* Frequency */}
                     <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
-                    <select> 
+                    <select value={e.freq} required onChange={this.expenseChanges.bind(this, i)}>
+                        <option value=''></option>
                         <option value='daily'>Daily</option>
                         <option value='weekly'>Weekly</option>
                         <option value='biweekly'>Bi-Weekly</option>
@@ -162,7 +165,7 @@ class Calculator extends Component {
     addIncomeState() {
         this.setState(prevState => ({
             income : [...prevState.income, 
-                { name : '', value : '' }
+                { name : '', value : '', freq: '' }
             ]
         }));
     };
@@ -205,7 +208,8 @@ class Calculator extends Component {
                     />
                     {/* Frequency */}
                     <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
-                    <select> 
+                    <select required> 
+                        <option value=''></option>
                         <option value='daily'>Daily</option>
                         <option value='weekly'>Weekly</option>
                         <option value='biweekly'>Bi-Weekly</option>
@@ -244,6 +248,21 @@ class Calculator extends Component {
             return _.toNumber(obj.value)
         });
 
+        const convertedExpenseValueAccumulator = this.state.expense.map(obj => {
+           
+            if (obj.freq = '5') {
+                return _.toNumber(obj.value * 1)
+            } else if (obj.freq = 'weekly') {
+                return _.toNumber(obj.value * 4)
+            } else if (obj.freq = 'bi-weekly') {
+                return _.toNumber(obj.value * 2) 
+            } else if (obj.freq = 'monthly') {
+               return _.toNumber(obj.value * 1)
+            } else if (obj.freq = 'annual') {
+                return _.toNumber(obj.value / 12)
+            }         
+        })
+
         const incomeNameAccumulator = this.state.income.map(obj => {
             return obj.name
         });
@@ -270,6 +289,7 @@ class Calculator extends Component {
         this.setState({
             expenseNameBank : expenseNameAccumulator,
             expenseValueBank : expenseValueAccumulator,
+            convertedExpenseValueBank : convertedExpenseValueAccumulator,
             incomeNameBank : incomeNameAccumulator,
             incomeValueBank : incomeValueAccumulator,
             expenseTotal : expenseTotalAdder,
@@ -283,10 +303,10 @@ class Calculator extends Component {
     resetTab() {
         this.setState({
             expense : [
-                { name : '', value : ''}
+                { name : '', value : '', freq: '' }
             ],
             income : [
-                { name : '', value: ''}
+                { name : '', value: '', freq: '' }
             ],
             // exp
             expenseNameBank : [],
@@ -454,7 +474,7 @@ class Calculator extends Component {
                         <Modal.Header closeButton>
                             <Modal.Title>Data Submitted!</Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>Check the Results tab to see your financial breakdown.</Modal.Body>
+                        <Modal.Body>The Results Analysis Section has now been populated below.</Modal.Body>
                         <Modal.Footer>
                             <Button variant="primary" onClick={this.hideSubmitModal}>
                                 Close
