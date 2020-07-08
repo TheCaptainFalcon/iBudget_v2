@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import _ from 'lodash';
-import { ResultsProvider, ExpenseProvider, IncomeProvider } from '../Contexts';
+import { ResultsProvider, ExpenseProvider, IncomeProvider, ExpenseFullProvider } from '../Contexts';
 import Results from './Results';
 import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faDollarSign, faHistory, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faDollarSign, faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
 import './css/Calculator.css'
 
 const FormButtonContainer = styled.div`
@@ -37,10 +37,10 @@ class Calculator extends Component {
                 // value is best left as string rather than 0,
                 // otherwise it adds onto the 0 + 'entry' and 
                 // UX is a pain, having to manually delete before entry
-                { name : '', value: '', freq: '' }
+                { name : '', value: '' }
             ],
             income : [
-                { name : '', value : '', freq: '' }
+                { name : '', value : '' }
             ],
             // exp
             expenseNameBank : [],
@@ -56,7 +56,9 @@ class Calculator extends Component {
             showResults: false,
             // modal
             submitModal: false,
-            resetModal: false
+            resetModal: false,
+            // checkbox
+            isChecked : false
         
         }
         
@@ -81,7 +83,9 @@ class Calculator extends Component {
         this.showResetModal = this.showResetModal.bind(this);
         this.hideSubmitModal = this.hideSubmitModal.bind(this);
         this.hideResetModal = this.hideResetModal.bind(this);
-
+        
+        // Checkbox
+        this.checkboxChange = this.checkboxChange.bind(this);
     }
 
     // Expense-related
@@ -92,7 +96,7 @@ class Calculator extends Component {
     addExpenseState() {
         this.setState(prevState => ({
             expense : [...prevState.expense, 
-                { name : '', value : '', freq: '' }
+                { name : '', value : '' }
             ]
         }));
     };
@@ -131,16 +135,7 @@ class Calculator extends Component {
                         value={e.value}
                         required
                     />
-                    {/* Frequency */}
-                    <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
-                    <select value={e.freq} required onChange={this.expenseChanges.bind(this, i)}>
-                        <option value=''></option>
-                        <option value='daily'>Daily</option>
-                        <option value='weekly'>Weekly</option>
-                        <option value='biweekly'>Bi-Weekly</option>
-                        <option value='monthly'>Monthly</option>
-                        <option value='annual'>Annual</option>
-                    </select>
+                  
                     {/* Delete X */}
                     <input
                         name='delExpForm'
@@ -165,7 +160,7 @@ class Calculator extends Component {
     addIncomeState() {
         this.setState(prevState => ({
             income : [...prevState.income, 
-                { name : '', value : '', freq: '' }
+                { name : '', value : '', }
             ]
         }));
     };
@@ -206,16 +201,7 @@ class Calculator extends Component {
                         value={e.value}
                         required
                     />
-                    {/* Frequency */}
-                    <FontAwesomeIcon icon={faHistory} style={{ margin:'0.5rem 0.5rem auto 1rem' }}/>
-                    <select required> 
-                        <option value=''></option>
-                        <option value='daily'>Daily</option>
-                        <option value='weekly'>Weekly</option>
-                        <option value='biweekly'>Bi-Weekly</option>
-                        <option value='monthly'>Monthly</option>
-                        <option value='annual'>Annual</option>
-                    </select>
+                    
                     {/* Delete form button */}
                     <input
                         name='delIncomeForm'
@@ -248,9 +234,17 @@ class Calculator extends Component {
             return _.toNumber(obj.value)
         });
 
-        const convertedExpenseValueAccumulator = this.state.expense.map(obj => {
+
+        // for(let i = 0; i <= this.state.expense.length; i++) {
+        // if(this.state.expense[i].freq === 'daily') {
+        //     console.log(_.toNumber(this.state.expense[i].value) * 30 )   
+        // } 
+        // }
+
+        let convertedExpenseValueAccumulator = this.state.expense.find(obj => {
+        
            
-            if (obj.freq = '5') {
+            if (obj.freq = 'daily') {
                 return _.toNumber(obj.value * 1)
             } else if (obj.freq = 'weekly') {
                 return _.toNumber(obj.value * 4)
@@ -303,10 +297,10 @@ class Calculator extends Component {
     resetTab() {
         this.setState({
             expense : [
-                { name : '', value : '', freq: '' }
+                { name : '', value : '' }
             ],
             income : [
-                { name : '', value: '', freq: '' }
+                { name : '', value: '' }
             ],
             // exp
             expenseNameBank : [],
@@ -320,7 +314,9 @@ class Calculator extends Component {
             budgetTotal : [],
             showSubmitResults: false,
             // modal
-            resetModal : false
+            resetModal : false,
+            // checkbox
+            isChecked : false
         });
     };
 
@@ -363,6 +359,13 @@ class Calculator extends Component {
         });
     };
 
+    // checkbox
+    checkboxChange() {
+        this.setState({
+            isChecked : !this.state.isChecked
+        })
+    }
+
     render() { 
 
         function renderTooltip(props) {
@@ -380,7 +383,7 @@ class Calculator extends Component {
                 overlay={renderTooltip}
             >
                 <sup
-                style={{ color: 'blue', fontSize: 'x-small', marginLeft:'0.25rem'}}   
+                    style={{ color: 'blue', fontSize: 'x-small', marginLeft:'0.25rem'}}   
                 >What is this?
                 </sup>
             </OverlayTrigger>
@@ -409,9 +412,10 @@ class Calculator extends Component {
                     <CalcTitle>Budget Calculations</CalcTitle>
 
                     <input
-                    id='strictFormula'
-                    type='checkbox'
-                    style={{ marginRight:'0.35rem' }}
+                        id='strictFormula'
+                        type='checkbox'
+                        onChange={this.checkboxChange}
+                        style={{ marginRight:'0.35rem' }}
                     />
                     <label htmlFor='strictFormula'>Strict Method</label>
                     <StrictHover/>
@@ -457,6 +461,7 @@ class Calculator extends Component {
                     {/* Results Component */}
                     {this.state.showSubmitResults ?
 
+                            <ExpenseFullProvider value={expense}>
                           <ResultsProvider value={budgetTotal}>
                             <ExpenseProvider value={expenseTotal}>
                             <IncomeProvider value={incomeTotal}>
@@ -465,6 +470,7 @@ class Calculator extends Component {
                             </IncomeProvider>
                             </ExpenseProvider>
                             </ResultsProvider>  
+                            </ExpenseFullProvider>
                         
                     : null }
 

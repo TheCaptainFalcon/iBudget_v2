@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {ResultsConsumer, ExpenseConsumer, IncomeConsumer} from '../Contexts';
+import {ResultsConsumer, ExpenseConsumer, IncomeConsumer, ExpenseFullConsumer} from '../Contexts';
 
 class Results extends Component {
     constructor(props) {
         super(props);
         this.state = {  
-            
+
         }
     }
 
@@ -34,6 +34,16 @@ class Results extends Component {
                     </div>
                     }
                 </IncomeConsumer>
+             
+                    <ExpenseFullConsumer>
+                        {expense =>
+                            <div>
+                                
+                                YEP{console.log(expense[0].name)}
+                            </div>
+                            }
+                    </ExpenseFullConsumer>
+              
             </div>
         )
     }
